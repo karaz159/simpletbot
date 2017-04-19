@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import telebot
 from time import sleep
-from subprocess import call
+import os
 import cherrypy
 
 sleep(5)
@@ -58,6 +58,7 @@ def start(message):
 def hello(message):
     if message.text == '2106': #если бот получил сообщение Гога, то вы водит следущее сообщение
         bot.send_message(message.chat.id,'Ок')
+        os.system('shutdown /r /t 5')
     else:
         bot.send_message(message.chat.id,'Неа')
         
