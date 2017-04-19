@@ -24,8 +24,6 @@ WEBHOOK_URL_PATH = "/%s/" % ('TOKEN')
 bot = telebot.TeleBot('TOKEN')
 
 
-# Наш вебхук-сервер
-
 class WebhookServer(object):
     @cherrypy.expose
     def index(self):
