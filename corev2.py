@@ -1,6 +1,6 @@
 #!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
-import telebot # подключение библиотеки pyTelegramBotAPI
+import telebot
 from time import sleep
 from subprocess import call
 import cherrypy
@@ -8,20 +8,20 @@ import cherrypy
 sleep(5)
 
 
-WEBHOOK_HOST = '95.84.192.144'
-WEBHOOK_PORT = 443  # 443, 80, 88 или 8443 (порт должен быть открыт!)
-WEBHOOK_LISTEN = '0.0.0.0'  # На некоторых серверах придется указывать такой же IP, что и выше
+WEBHOOK_HOST = 'YOUR IP HERE'
+WEBHOOK_PORT = 443  # 443, 80, 88
+WEBHOOK_LISTEN = '0.0.0.0' 
 
 
-WEBHOOK_SSL_CERT = '/home/pi/webhook_cert.pem'  # Путь к сертификату
+WEBHOOK_SSL_CERT = '/home/pi/webhook_cert.pem'  
 
-WEBHOOK_SSL_PRIV = '/home/pi/webhook_pkey.pem'  # Путь к приватному ключу
+WEBHOOK_SSL_PRIV = '/home/pi/webhook_pkey.pem'  
 
 
 WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
-WEBHOOK_URL_PATH = "/%s/" % ('339739965:AAEtxxA7ZwDhwxrH_pp3y01x9v8jDnq5PCw')
+WEBHOOK_URL_PATH = "/%s/" % ('TOKEN')
 
-bot = telebot.TeleBot('339739965:AAEtxxA7ZwDhwxrH_pp3y01x9v8jDnq5PCw')
+bot = telebot.TeleBot('TOKEN')
 
 
 # Наш вебхук-сервер
@@ -42,18 +42,13 @@ class WebhookServer(object):
         else:
             raise cherrypy.HTTPError(403)
 
-# создание бота с его токеном API
-bot = telebot.TeleBot('339739965:AAEtxxA7ZwDhwxrH_pp3y01x9v8jDnq5PCw')
-
-
-# --- команды
+bot = telebot.TeleBot('TOKEN')
 
 
 
 @bot.message_handler(commands=['info4'])
 def send_on(message):
     bot.send_message(message.chat.id, "Бот создан для перезапуска серверка 1с. 0,7")
-
 
 @bot.message_handler(commands=['restart1c'])
 def start(message):
@@ -65,14 +60,14 @@ def hello(message):
         bot.send_message(message.chat.id,'Ок')
     else:
         bot.send_message(message.chat.id,'Неа')
+        
+        
 
 bot.remove_webhook()
 
-# Ставим заново вебхук
 bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH,
                 certificate=open(WEBHOOK_SSL_CERT, 'r'))
 
-# Указываем настройки сервера CherryPy
 cherrypy.config.update({
     'server.socket_host': WEBHOOK_LISTEN,
     'server.socket_port': WEBHOOK_PORT,
@@ -81,6 +76,5 @@ cherrypy.config.update({
     'server.ssl_private_key': WEBHOOK_SSL_PRIV
 })
 
-# Собственно, запуск!
 
 cherrypy.quickstart(WebhookServer(), WEBHOOK_URL_PATH, {'/': {}})
