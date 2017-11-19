@@ -1,6 +1,6 @@
 #!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
-import os, cherrypy, random, config, re, telebot # подключение библиотеки pyTelegramBotAPI
+import os, cherrypy, random, config, re, telebot, ping, sys # подключение библиотеки pyTelegramBotAPI
 from time import sleep
 
 sleep(5)
@@ -40,6 +40,14 @@ def password_gen():
     while len(PASSWORD) != 4:
         PASSWORD += str(random.randint(0,9))
 
+def do_ping(adress):
+    try:
+        result = ping.do_one(adress , 2) # не может получить адрес вообще никак
+        if result:
+            return True
+    except ping.socket.gaierror:
+        return False
+
 welcome_string = []
 info_string = []
 welcome_string.append(random.choice(WELCOME))
@@ -49,12 +57,22 @@ info_string.append('а так же для упрощения части ежед
 info_string.append('Если нам это хоть как то помогло,\n')
 info_string.append('то я искренне рад и счастлив')
 
-bot.send_message('-187957031', ''.join(welcome_string), parse_mode = 'Markdown')
-
+bot.send_message(config.group, ''.join(welcome_string), parse_mode = 'Markdown')
 # --- Команды
 @bot.message_handler(commands = ['log'])
 def launchlogger(message):
     os.system('D:/bot/logger/main.py')
+
+@bot.message_handler(commands = ['ping'])
+def ping_stuff(message):
+    number = 0
+    mcd = message.chat.id
+    for i in config.HOSTS:
+        if do_ping(i):
+            bot.send_message(mcd, config.NAMES[number] +' Работает')
+        else:
+            bot.send_message(mcd, config.NAMES[number] +' Не работает')
+        number += 1
 
 @bot.message_handler(commands=['info4'])
 def send_info(message):
@@ -124,7 +142,7 @@ def huh(message):
     elif message.text == 'О боте':
         send_info(message)
     elif message.text == "Чекнуть офисы":
-        bot.send_message(cid, 'Фича в разработке', reply_markup=hideBoard)
+        bot.send_message(cid, 'Фича в разработке и доступна по команде /ping', reply_markup=hideBoard)
         bot.send_sticker(cid, 'CAADAgADXwADyJsDAAEDnOXAuebkBgI')
     bot.send_message(cid,'')
 
