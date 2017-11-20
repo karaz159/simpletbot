@@ -65,14 +65,17 @@ def launchlogger(message):
 
 @bot.message_handler(commands = ['ping'])
 def ping_stuff(message):
+    ping_string = []
     number = 0
     mcd = message.chat.id
     for i in config.HOSTS:
         if do_ping(i):
-            bot.send_message(mcd, config.NAMES[number] +' Работает')
+            ping_string.append(config.NAMES[number] +' ✅\n')
         else:
-            bot.send_message(mcd, config.NAMES[number] +' Не работает')
+            ping_string.append(config.NAMES[number] +' ❌\n')
         number += 1
+    bot.send_message(mcd, ''.join(ping_string), parse_mode = 'Markdown', reply_markup=hideBoard)
+    ping_string.clear()
 
 @bot.message_handler(commands=['info4'])
 def send_info(message):
