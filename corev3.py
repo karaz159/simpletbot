@@ -145,7 +145,7 @@ def huh(message):
     elif message.text == 'О боте':
         send_info(message)
     elif message.text == "Чекнуть офисы":
-        bot.send_message(cid, 'Фича в разработке и доступна по команде /ping', reply_markup=hideBoard)
+        ping_stuff(message)
         bot.send_sticker(cid, 'CAADAgADXwADyJsDAAEDnOXAuebkBgI')
     bot.send_message(cid,'')
 
