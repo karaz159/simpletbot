@@ -5,12 +5,12 @@ from time import sleep
 
 sleep(5)
 WEBHOOK_HOST = config.ip
-WEBHOOK_PORT = 443  # 443, 80, 88 or 8443
+WEBHOOK_PORT = 88  # 443, 80, 88 or 8443
 WEBHOOK_LISTEN = '0.0.0.0'
 WEBHOOK_SSL_CERT = 'D:/webhook_cert.pem'
 WEBHOOK_SSL_PRIV = 'D:/webhook_pkey.pem'
 WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
-WEBHOOK_URL_PATH = "/%s/" % ('config.token')
+WEBHOOK_URL_PATH = "/%s/" % (config.token)
 
 class WebhookServer(object):
     @cherrypy.expose
@@ -27,7 +27,7 @@ class WebhookServer(object):
             raise cherrypy.HTTPError(403)
 
 #---- Cоздание бота с его токеном API и прочей мишуры
-bot = telebot.TeleBot('config.token')
+bot = telebot.TeleBot(config.token)
 
 PASSWORD = ''
 WELCOME = ("Восстал из пепла", "Сервер готов, удачки","Вперед,за работу! бравые бухгалтера!")
@@ -52,12 +52,12 @@ welcome_string = []
 info_string = []
 welcome_string.append(random.choice(WELCOME))
 welcome_string.append('\nПароль для этой сессии: '+ PASSWORD)
-info_string.append('Данный бот был сделан с любовью к программированию и к глупым шуткам\n)
+info_string.append('Данный бот был сделан с любовью к программированию и к глупым шуткам\n')
 info_string.append('а так же для упрощения части ежедневной рутины.\n')
 info_string.append('Если нам это хоть как то помогло,\n')
 info_string.append('то я искренне рад и счастлив')
 
-bot.send_message(config.group, ''.join(welcome_string), parse_mode = 'Markdown')
+#bot.send_message(config.group, ''.join(welcome_string), parse_mode = 'Markdown')
 # --- Команды
 @bot.message_handler(commands = ['log'])
 def launchlogger(message):
@@ -100,13 +100,13 @@ def check(message):
 def handle_message(message):
     bot.send_message(message.chat.id, "C хрена ли?")
 
-@bot.message_handler(regexp="1с")
+#@bot.message_handler(regexp="1с")
 def handle_message1c(message):
     photo = open('D:/bot/10485659.jpg', 'rb')
     bot.send_message(message.chat.id, "Убейте меня")
     bot.send_photo(message.chat.id, photo)
 
-@bot.message_handler(regexp="[Уу]точн[её]нк[уа]")
+#@bot.message_handler(regexp="[Уу]точн[её]нк[уа]")
 def handle_messagey(message):
     if random.choice([1,2]) == 2:
         calm = random.choice(CALM_LIST)
@@ -115,7 +115,7 @@ def handle_messagey(message):
             photo = open('D:/bot/novo-passit.jpg', 'rb')
             bot.send_photo(message.chat.id, photo)
 
-@bot.message_handler(regexp="[Тт]ребовани[ея]")
+#@bot.message_handler(regexp="[Тт]ребовани[ея]")
 def handle_messageT(message):
     calm = random.choice(CALM_LIST)
     bot.send_message(message.chat.id, "Я, конечно, понимаю, что вы хотите сейчас намутить суицид или еще чего, но вспомните про "+calm+" и все встанет на свои места")
