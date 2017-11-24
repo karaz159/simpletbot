@@ -47,7 +47,7 @@ def do_ping(adress):
         if result:
             return True
     except ping.socket.gaierror:
-        return
+        return False
     
 password_gen()
 welcome_string = []
