@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os, cherrypy, random, config, re, telebot, ping, sys # подключение библиотеки pyTelegramBotAPI
 from time import sleep
+from telebot import types
 
 sleep(5)
 WEBHOOK_HOST = config.ip
@@ -46,8 +47,9 @@ def do_ping(adress):
         if result:
             return True
     except ping.socket.gaierror:
-        return False
-
+        return
+    
+password_gen()
 welcome_string = []
 info_string = []
 welcome_string.append(random.choice(WELCOME))
@@ -56,8 +58,8 @@ info_string.append('Данный бот был сделан с любовью к
 info_string.append('а так же для упрощения части ежедневной рутины.\n')
 info_string.append('Если нам это хоть как то помогло,\n')
 info_string.append('то я искренне рад и счастлив')
-
-#bot.send_message(config.group, ''.join(welcome_string), parse_mode = 'Markdown')
+hideBoard = types.ReplyKeyboardRemove(selective=False)
+bot.send_message(config.group, ''.join(welcome_string), parse_mode = 'Markdown')
 # --- Команды
 @bot.message_handler(commands = ['log'])
 def launchlogger(message):
@@ -74,18 +76,18 @@ def ping_stuff(message):
         else:
             ping_string.append(config.NAMES[number] +' ❌\n')
         number += 1
-    bot.send_message(mcd, ''.join(ping_string), parse_mode = 'Markdown', reply_markup=hideBoard)
+    bot.send_message(mcd, ''.join(ping_string), parse_mode = 'Markdown', reply_markup = hideBoard)
     ping_string.clear()
 
 @bot.message_handler(commands=['info4'])
 def send_info(message):
-    bot.send_message(message.chat.id, ''.join(info_string), parse_mode = 'Markdown', reply_markup=hideBoard)
+    bot.send_message(message.chat.id, ''.join(info_string), parse_mode = 'Markdown', reply_markup = hideBoard)
     bot.send_sticker(message.chat.id, 'CAADAgADGgADFvHqEnkDd_90B-tyAg')
 
 @bot.message_handler(commands=['restart1c'])
 def restart(message):
     # отправка простого сообщения
-    sent = bot.send_message(message.chat.id, 'Пароль? ', reply_markup=hideBoard)
+    sent = bot.send_message(message.chat.id, 'Пароль? ', reply_markup = hideBoard)
     bot.register_next_step_handler(sent, check)
 
 def check(message):
@@ -100,13 +102,13 @@ def check(message):
 def handle_message(message):
     bot.send_message(message.chat.id, "C хрена ли?")
 
-#@bot.message_handler(regexp="1с")
+@bot.message_handler(regexp="1с")
 def handle_message1c(message):
     photo = open('D:/bot/10485659.jpg', 'rb')
     bot.send_message(message.chat.id, "Убейте меня")
     bot.send_photo(message.chat.id, photo)
 
-#@bot.message_handler(regexp="[Уу]точн[её]нк[уа]")
+@bot.message_handler(regexp="[Уу]точн[её]нк[уа]")
 def handle_messagey(message):
     if random.choice([1,2]) == 2:
         calm = random.choice(CALM_LIST)
@@ -115,7 +117,7 @@ def handle_messagey(message):
             photo = open('D:/bot/novo-passit.jpg', 'rb')
             bot.send_photo(message.chat.id, photo)
 
-#@bot.message_handler(regexp="[Тт]ребовани[ея]")
+@bot.message_handler(regexp="[Тт]ребовани[ея]")
 def handle_messageT(message):
     calm = random.choice(CALM_LIST)
     bot.send_message(message.chat.id, "Я, конечно, понимаю, что вы хотите сейчас намутить суицид или еще чего, но вспомните про "+calm+" и все встанет на свои места")
@@ -126,7 +128,7 @@ def password_generator(message):
     bot.send_message(message.chat.id, "Генерирую новый пароль")
     password_gen()
 
-@bot.message_handler(regexp="бот!")
+@bot.message_handler(regexp="[Бб]от!")
 def welcome(message):
     # Эти параметры для клавиатуры необязательны, просто для удобства
     keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True) #Создаем объект клавиатуры
