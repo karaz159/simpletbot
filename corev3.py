@@ -1,4 +1,4 @@
-#!/usr/bin/python3.4
+#!/usr/bin/python3.4 hi there
 # -*- coding: utf-8 -*-
 import os, cherrypy, random, config, re, telebot, ping, sys # подключение библиотеки pyTelegramBotAPI
 from time import sleep
@@ -48,7 +48,7 @@ def do_ping(adress):
             return True
     except ping.socket.gaierror:
         return False
-    
+
 password_gen()
 welcome_string = []
 info_string = []
