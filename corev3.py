@@ -49,6 +49,14 @@ def do_ping(adress):
     except ping.socket.gaierror:
         return False
 
+def do_ar_ping(adress):
+    try:
+        result = ping.verbose_ping(adress, timeout = 3, count = 5)
+        if result:
+            return True
+    except ping.socket.gaierror:
+        return False
+
 password_gen()
 welcome_string = []
 info_string = []
@@ -70,14 +78,28 @@ def ping_stuff(message):
     ping_string = []
     number = 0
     mcd = message.chat.id
-    for i in config.HOSTS:
+    for i in config.ROUTERS:
         if do_ping(i):
-            ping_string.append(config.NAMES[number] +' ✅\n')
+            if do_ping(config.HOSTS[number]):
+                ping_string.append(config.NAMES[number] +' ✅✅\n')
+            else:
+                ping_string.append(config.NAMES[number] +' ✅❌\n')
         else:
-            ping_string.append(config.NAMES[number] +' ❌\n')
+            ping_string.append(config.NAMES[number] +' ❌❌\n')
         number += 1
     bot.send_message(mcd, ''.join(ping_string), parse_mode = 'Markdown', reply_markup = hideBoard)
     ping_string.clear()
+
+@bot.message_handler(commands = ['aping'])
+def aping_stuff(message):
+    ping_string= []
+    number = 0
+    mcd = message.chat.id
+    bot.send_message(mcd, 'Очень долгая фича, наберитесь терпения')
+    for i in config.HOSTS:
+        do_ar_ping(i)
+    bot.send_message(mcd, 'Закончил! Сейчас составлю список!')
+    ping_stuff(message)
 
 @bot.message_handler(commands=['info4'])
 def send_info(message):
@@ -123,20 +145,27 @@ def handle_messageT(message):
     bot.send_message(message.chat.id, "Я, конечно, понимаю, что вы хотите сейчас намутить суицид или еще чего, но вспомните про "+calm+" и все встанет на свои места")
     regexp = random.choice(words)
 
-@bot.message_handler(commands=['password'])
+@bot.message_handler(commands=['password'])# Не работает так, как надо
 def password_generator(message):
     bot.send_message(message.chat.id, "Генерирую новый пароль")
     password_gen()
+    bot.send_message(config.group, PASSWORD)
+
+
 
 @bot.message_handler(regexp="[Бб]от!")
 def welcome(message):
     # Эти параметры для клавиатуры необязательны, просто для удобства
-    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True) #Создаем объект клавиатуры
+    keyboard = types.ReplyKeyboardMarkup() #Создаем объект клавиатуры
     restart_server = types.KeyboardButton(text="Перезапустить сервер!") #Состовляющие
-    about = types.KeyboardButton(text="О боте")
     office_status = types.KeyboardButton(text = 'Чекнуть офисы')
+    a_ping = types.KeyboardButton(text = 'Пробить офисы')
+    about = types.KeyboardButton(text="О боте")
 
-    keyboard.add(restart_server, office_status, about) # Добавляем все
+    keyboard.row(restart_server)
+    keyboard.row(office_status, a_ping)
+    keyboard.row(about) # Добавляем все
+
     msg = bot.send_message(message.chat.id, random.choice(WHAT), reply_markup=keyboard)
     bot.register_next_step_handler(msg, huh)
 
@@ -149,6 +178,7 @@ def huh(message):
     elif message.text == "Чекнуть офисы":
         ping_stuff(message)
         bot.send_sticker(cid, 'CAADAgADXwADyJsDAAEDnOXAuebkBgI')
+    elif message.text == "Пробить офисы"
     bot.send_message(cid,'')
 
 bot.remove_webhook()
