@@ -92,8 +92,6 @@ def ping_stuff(message):
 
 @bot.message_handler(commands = ['aping'])
 def aping_stuff(message):
-    ping_string= []
-    number = 0
     mcd = message.chat.id
     bot.send_message(mcd, 'Очень долгая фича, наберитесь терпения')
     for i in config.HOSTS:
@@ -178,7 +176,8 @@ def huh(message):
     elif message.text == "Чекнуть офисы":
         ping_stuff(message)
         bot.send_sticker(cid, 'CAADAgADXwADyJsDAAEDnOXAuebkBgI')
-    elif message.text == "Пробить офисы"
+    elif message.text == "Пробить офисы":
+        aping_stuff(message)
     bot.send_message(cid,'')
 
 bot.remove_webhook()
